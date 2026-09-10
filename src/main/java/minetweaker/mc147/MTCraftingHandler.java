@@ -25,11 +25,11 @@ public class MTCraftingHandler implements ICraftingHandler {
 	@Override
 	public void onCrafting(EntityPlayer player, ItemStack crafting, IInventory craftMatrix) {
 		IPlayer iplayer = MineTweakerMC.getIPlayer(player);
-		
+
 		if (MineTweakerMod.INSTANCE.recipes.hasTransformerRecipes()) {
 			MineTweakerMod.INSTANCE.recipes.applyTransformations(MCCraftingInventory.get(craftMatrix, player), iplayer);
 		}
-		
+
 		if (MineTweakerImplementationAPI.events.hasPlayerCrafted()) {
 			MineTweakerImplementationAPI.events.publishPlayerCrafted(new PlayerCraftedEvent(
 					iplayer,

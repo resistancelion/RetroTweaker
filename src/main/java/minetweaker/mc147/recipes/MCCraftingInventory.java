@@ -108,10 +108,12 @@ public class MCCraftingInventory implements ICraftingInventory {
 			original = new ItemStack[stacks.length];
 			stackCount = 0;
 		}
-		
+		boolean chgatall = false;
 		for (int i = 0; i < inventory.getSizeInventory(); i++) {
-			if (changed(i)) {
-				//System.out.println("Slot " + i + " changed");
+			int chgreason = changereason(i);
+			if (chgreason != 0) {
+				chgatall = true;
+				//System.out.println("Slot " + i + " changed: " + chgreason);
 				original[i] = inventory.getStackInSlot(i);
 				if (inventory.getStackInSlot(i) != null) {
 					if (stacks[i] == null) stackCount++;
@@ -122,7 +124,10 @@ public class MCCraftingInventory implements ICraftingInventory {
 				}
 			}
 		}
-		//System.out.println("Num stack count: " + stackCount);
+		//if (chgatall) {
+		//	System.out.println("Num stack count: " + stackCount);
+		//}
+
 	}
 	
 	@Override
@@ -165,19 +170,7 @@ public class MCCraftingInventory implements ICraftingInventory {
 		//System.out.println("SetStack(" + x + ", " + y + ") " + stack);
 		
 		int ix = y * width + x;
-		if (stack != stacks[ix]) {
-			if (stack == null) {
-				stackCount--;
-				inventory.setInventorySlotContents(ix, null);
-			} else {
-				inventory.setInventorySlotContents(ix, getItemStack(stack));
-				
-				if (stacks[ix] == null) {
-					stackCount++;
-				}
-			}
-			stacks[ix] = stack;
-		}
+		setStack(ix, stack);
 	}
 
 	@Override
@@ -189,20 +182,41 @@ public class MCCraftingInventory implements ICraftingInventory {
 				stackCount--;
 				inventory.setInventorySlotContents(i, null);
 			} else {
-				inventory.setInventorySlotContents(i, getItemStack(stack));
+				ItemStack afterUpdate = getItemStack(stack);
+				ItemStack beforeUpdate = inventory.getStackInSlot(i);
+
+				if (beforeUpdate != null && afterUpdate != null && beforeUpdate.itemID == afterUpdate.itemID && beforeUpdate.getItem().hasContainerItem()) {
+
+					beforeUpdate.setItemDamage(afterUpdate.getItemDamage());
+					if (afterUpdate.hasTagCompound()) {
+					    beforeUpdate.setTagCompound((net.minecraft.nbt.NBTTagCompound)afterUpdate.getTagCompound().copy());
+					}
+
+					beforeUpdate.stackSize = 1;
+				} else {
+					inventory.setInventorySlotContents(i, afterUpdate);
+				}
 				
 				if (stacks[i] == null) {
 					stackCount++;
 				}
 			}
 			stacks[i] = stack;
+			original[i] = inventory.getStackInSlot(i);
 		}
 	}
 	
-	private boolean changed(int i) {
+	private boolean change(int i) {
 		if (original[i] != inventory.getStackInSlot(i)) return true;
 		if (original[i] != null && stacks[i].getAmount() != original[i].stackSize) return true;
-		
+
 		return false;
+	}
+
+	private int changereason(int i) {
+		if (original[i] != inventory.getStackInSlot(i)) return 1;
+		if (original[i] != null && stacks[i].getAmount() != original[i].stackSize) return 2;
+
+		return 0;
 	}
 }
