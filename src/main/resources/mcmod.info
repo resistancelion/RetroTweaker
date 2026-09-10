@@ -1,0 +1,16 @@
+[
+{
+  "modid": "RetroTweaker",
+  "name": "RetroTweaker",
+  "version": "${version}",
+  "mcversion": "1.4.7",
+  "description": "Customize your minecraft experience in the past!",
+  "credits": "Created By Stan Hebben",
+  "logoFile": "assets/minetweaker/logo.png",
+  "url": "http://minetweaker3.powerofbytes.com",
+  "authorList": [ "Stan Hebben", "unascribed (1.4.7 port)" ],
+  "parent": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
