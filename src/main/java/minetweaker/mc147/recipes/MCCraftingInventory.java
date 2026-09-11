@@ -206,13 +206,6 @@ public class MCCraftingInventory implements ICraftingInventory {
 			original[i] = inventory.getStackInSlot(i);
 		}
 	}
-	
-	private boolean change(int i) {
-		if (original[i] != inventory.getStackInSlot(i)) return true;
-		if (original[i] != null && stacks[i].getAmount() != original[i].stackSize) return true;
-
-		return false;
-	}
 
 	private int changereason(int i) {
 		if (original[i] != inventory.getStackInSlot(i)) return 1;
